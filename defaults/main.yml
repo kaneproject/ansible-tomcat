@@ -1,0 +1,6 @@
+---
+# defaults file for curso.tomcat
+tomcat_user: tomcatcillo
+tomcat_group: "{{ tomcat_user }}"
+tomcat_major_version: 9
+tomcat_minor_version: 9.0.27

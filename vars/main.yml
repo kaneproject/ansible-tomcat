@@ -1,0 +1,5 @@
+---
+# vars file for curso.tomcat
+tomcat_mirror: http://apache.rediris.es/tomcat    
+tomcat_extension: tar.gz
+tomcat_url: "{{ tomcat_mirror }}/tomcat-{{ tomcat_major_version }}/v{{ tomcat_minor_version }}/bin/apache-tomcat-{{ tomcat_minor_version }}.{{ tomcat_extension }}"

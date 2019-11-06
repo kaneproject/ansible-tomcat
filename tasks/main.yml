@@ -1,0 +1,48 @@
+---
+# tasks file for curso.tomcat
+- name: crear grupo tomcatdemierda
+  group:
+    name: "{{ tomcat_group }}"
+    state: present
+- name: crear usuario tomcatdemierda
+  user:
+    name: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
+    home: "/opt/tomcat"
+- name: evaluo la existencia del tomcat ya instalado
+  stat:
+    path: /opt/tomcat/conf/tomcat-users.xml
+  register: tomcat_users_file
+- debug:
+    msg: "Está sin instalar tomcat? : {{ not tomcat_users_file.stat.exists }}"
+    verbosity: 2
+- name: Instalacion completa de Apache Tomcat {{ tomcat_minor_version }}
+  block:
+    - name: descargar tomcat de mierda
+      copy:
+        src: apache-tomcat-{{ tomcat_minor_version }}.{{ tomcat_extension }}
+        dest: /tmp/
+    - name: Descomprimir tomcat
+      unarchive:
+        src: /tmp/apache-tomcat-{{ tomcat_minor_version }}.{{ tomcat_extension }}
+        dest: /tmp/
+        remote_src: yes
+    - name: mover directorio a destino final V
+      shell: "mv /tmp/apache-tomcat-{{ tomcat_minor_version }}/* /opt/tomcat/ "
+  when: not tomcat_users_file.stat.exists
+- name: cambiar permisos del directorio al usuario {{ tomcat_user }}
+  file:
+    path: /opt/tomcat
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
+    recurse: yes
+# - crear usuario y password para tomcat
+- name: crear servicio
+  template:
+    src: tomcat-curso.service.j2
+    dest: /etc/systemd/system/tomcat-curso.service
+- name: automatizar servicio
+  service:
+    name: tomcat-curso
+    state: started
+    enabled: yes
